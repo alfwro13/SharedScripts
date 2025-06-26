@@ -1,4 +1,4 @@
-﻿$saveto = "C:\\listmembers.txt"
+﻿$saveto = "C:\\listmembers.txt" 
 
 Get-DistributionGroup | sort name | ForEach-Object {
 
