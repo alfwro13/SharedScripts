@@ -1,7 +1,7 @@
 ﻿$WorkstationName = Read-Host "Please enter the name of your workstation/server you wish to clean"
 Write-Host "You have entered" $WorkstationName "as your workstation"
-
 pause
+
 
 invoke-command -ComputerName $WorkstationName -ScriptBlock { Remove-Item "E:\Users\*\AppData\Local\Temp\*" -force -recurse }
 
