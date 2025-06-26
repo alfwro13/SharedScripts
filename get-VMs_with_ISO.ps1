@@ -1,0 +1,1 @@
+﻿Get-CDDrive -VM * | where {$_.isoPath -ne $null } | select Parent,IsoPath | out-Gridview

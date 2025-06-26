@@ -1,0 +1,17 @@
+AD_lockout/
+Archive_PS_scripts/
+CitrixOptimizer/
+creds/
+DiskMon/
+inventory/
+officedeploymenttool/
+PortQryUI/
+SysinternalsSuite/
+TCPView/
+temp/
+VM/
+Windows Resource Kits/
+wsusdiag
+*.exe
+*.log
+*.tmp

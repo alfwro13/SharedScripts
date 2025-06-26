@@ -1,0 +1,1 @@
+﻿runas /user:isys\zamw C:\Windows\BatchPatch.exe

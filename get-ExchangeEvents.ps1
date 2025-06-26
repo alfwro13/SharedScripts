@@ -1,0 +1,2 @@
+﻿$eventsdisplayed = Read-Host "How many events do you want me to display"
+Get-EventLog -log application -ComputerName m4ukex02,m4ukex08 -source MSExchangeIS -newest $eventsdisplayed | Out-GridView

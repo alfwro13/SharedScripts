@@ -1,0 +1,1 @@
+(Get-View ScheduledTaskManager).ScheduledTask | %{(Get-View $_).Info} | select name,nextruntime

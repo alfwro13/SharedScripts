@@ -1,0 +1,1 @@
+powershell enable-psremoting -f
