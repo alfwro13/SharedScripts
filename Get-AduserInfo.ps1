@@ -5,6 +5,14 @@
 $date = get-date
 Write-Host "Current date and time:" $date -BackgroundColor Yellow -ForegroundColor Black
 
+try {
+    $details = Get-ADUser $UserName -Properties * -ErrorAction Stop
+} catch {
+    Write-Error "User '$UserName' not found or cannot be retrieved."
+    return
+}
+
+
 $details = get-aduser $UserName -Properties * 
 $details | select DisplayName,Description,EmailAddress,CanonicalName,whenCreated,LastBadPasswordAttempt,badPwdCount,PasswordLastSet,PasswordNeverExpires,PasswordExpired,LastLogonDate,LockedOut,HomeDirectory,HomeDrive,homeMDB,LogonCount,Manager,Modified,ObjectSID,AccountExpirationDate,Enabled
 ""
