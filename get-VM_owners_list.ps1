@@ -15,5 +15,5 @@ $myCluster = Read-Host "Select Cluster ID"
 $selectedCluster = $clusters[$myCluster]
 Write-Host "You selected cluster: $($selectedCluster.Name)"
 
-get-cluster $selectedCluster | Get-VM | Select-Object Name,@{Name='Owner';Expression={ ($_ | Get-Annotation -CustomAttribute 'Owner').Value }} #| out-gridview
+get-cluster $selectedCluster | Get-VM | Select-Object Name,@{Name='Owner';Expression={ ($_ | Get-Annotation -CustomAttribute 'Owner').Value }} | out-gridview
 
