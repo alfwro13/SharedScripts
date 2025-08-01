@@ -11,7 +11,7 @@ TCPView/
 temp/
 VM/
 Windows Resource Kits/
-PS_JSON_CONFIG/
+
 wsusdiag
 *.exe
 *.log
