@@ -38,6 +38,11 @@ param (
 $userToCheck = "INTRANET.MACRO4.COM\$UserName"
 
 Write-Host "Checking permissions for user: $userToCheck`n"
+if($GridView) {
+    Write-Host "Results will be displayed in an Out-GridView window."
+} else {
+    Write-Host "Results will be displayed in the console."
+}
 
 # Get all VMs
 $vms = Get-VM
