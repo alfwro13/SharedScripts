@@ -17,19 +17,19 @@
     Optional switch to output results in an Out-GridView window. If not specified, output is sent to the console.
 
 .EXAMPLE
-    .\Get-InactiveUserAccounts.ps1
+    .\Get-Inactive_AD_Objects.ps1
     Shows user accounts inactive for 180 days or more in the console.
 
 .EXAMPLE
-    .\Get-InactiveUserAccounts.ps1 -DaysInactive 90
+    .\Get-Inactive_AD_Objects.ps1 -DaysInactive 90
     Shows user accounts inactive for 90 days or more in the console.
 
 .EXAMPLE
-    .\Get-InactiveUserAccounts.ps1 -AccountType Computer -DaysInactive 120 -GridView
+    .\Get-Inactive_AD_Objects.ps1 -AccountType Computer -DaysInactive 120 -GridView
     Shows computer accounts inactive for 120 days or more in an Out-GridView window.
 
 .EXAMPLE
-    Get-Help .\Get-InactiveUserAccounts.ps1 -Full
+    Get-Help .\Get-Inactive_AD_Objects.ps1 -Full
     Displays full help for the script.
 
 .NOTES
