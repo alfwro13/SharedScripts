@@ -1,19 +1,26 @@
 ﻿param (
     [int]$DaysInactive = 180,
+    [ValidateSet("User", "Computer")]
+    [string]$AccountType = "User",
     [switch]$GridView
 )
 
 # Calculate the date threshold
 $then = (Get-Date).AddDays(-$DaysInactive)
 
-# Get users with lastLogonDate older than threshold
-$users = Get-ADUser -Property Name, LastLogonDate, DisplayName, Description, ModifyTimeStamp `
-    -Filter {LastLogonDate -lt $then} |
-    Select-Object Name, LastLogonDate, Description, ModifyTimeStamp
+# Get accounts based on type
+if ($AccountType -eq "User") {
+    $accounts = Get-ADUser -Property Name, LastLogonDate, DisplayName, Description, ModifyTimeStamp -Filter {LastLogonDate -lt $then} |
+        Select-Object Name, LastLogonDate, Description, ModifyTimeStamp
+}
+elseif ($AccountType -eq "Computer") {
+    $accounts = Get-ADComputer -Property Name, LastLogonDate, OperatingSystem, Description, Modified -Filter {LastLogonDate -lt $then} |
+        Select-Object Name, LastLogonDate, OperatingSystem, Description, Modified
+}
 
 # Output based on switch
 if ($GridView) {
-    $users | Out-GridView -Title "Inactive AD Users ($DaysInactive+ days)"
+    $accounts | Out-GridView -Title "$AccountType Accounts Inactive for $DaysInactive+ Days"
 } else {
-    $users | Format-Table -AutoSize
+    $accounts | Format-Table -AutoSize
 }
