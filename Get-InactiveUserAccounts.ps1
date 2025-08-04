@@ -1,3 +1,19 @@
-﻿$then = (Get-Date).AddDays(-360) # The 360 is the number of days from today since the last logon.
+﻿param (
+    [int]$DaysInactive = 180,
+    [switch]$GridView
+)
 
-Get-ADuser -Property Name,lastLogonDate -Filter {lastLogonDate -lt $then} | FT Name,lastLogonDate
+# Calculate the date threshold
+$then = (Get-Date).AddDays(-$DaysInactive)
+
+# Get users with lastLogonDate older than threshold
+$users = Get-ADUser -Property Name, LastLogonDate, DisplayName, Description, ModifyTimeStamp `
+    -Filter {LastLogonDate -lt $then} |
+    Select-Object Name, LastLogonDate, Description, ModifyTimeStamp
+
+# Output based on switch
+if ($GridView) {
+    $users | Out-GridView -Title "Inactive AD Users ($DaysInactive+ days)"
+} else {
+    $users | Format-Table -AutoSize
+}
