@@ -15,17 +15,14 @@ $template_selection = $templates[$myTemplate]
 
 $a = Get-Datastore FS5200_TRAINING
 
-if ($template_selection.Name -eq "Base-DW-IntroCourse-220810")
+
+#if ($template_selection.Name -eq "Base-Win10-220922-lpd")
+#	{
+#		$osCust = Get-OSCustomizationSpec -name "training Template"
+#	}
+if ($template_selection.Name -eq "Base-Win11-250916v2")
 	{
-		$osCust = Get-OSCustomizationSpec -name "training Template2"
-	}
-if ($template_selection.Name -eq "Base-Win10-220922-lpd")
-	{
-		$osCust = Get-OSCustomizationSpec -name "training Template"
-	}
-if ($template_selection.Name -eq "Base-Win11-231220-lpd")
-	{
-		$osCust = Get-OSCustomizationSpec -name "Training Template Win11"
+		$osCust = Get-OSCustomizationSpec -name "Win11_Training_Template"
 	}
 
 Write-Host "Will deploy to" $a.name
