@@ -55,43 +55,23 @@ $resPool = Get-ResourcePool -ID ResourcePool-resgroup-127172
 
 #########################################################
 
-$taskTab = @{ }
+#$taskTab = @{ }
+
+# foreach ($Name in $newVmList) {
+#     $task = New-VM -Name $Name -ResourcePool $resPool -Location $folder -Datastore FS5200_TRAINING -Template $template_selection.Name -OSCustomizationSpec $osCust -RunAsync
+
+#     # Check if the task was created successfully
+#     if ($task.Id) {
+#         $taskTab[$task.Id] = $Name
+#     } else {
+#         Write-Host "Failed to create VM: $Name"
+#     }
+# }
+
 
 foreach ($Name in $newVmList) {
-    $task = New-VM -Name $Name -ResourcePool $resPool -Location $folder -Datastore FS5200_TRAINING -Template $template_selection.Name -OSCustomizationSpec $osCust -RunAsync
-
-    # Check if the task was created successfully
-    if ($task.Id) {
-        $taskTab[$task.Id] = $Name
-    } else {
-        Write-Host "Failed to create VM: $Name"
-    }
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Deploying VM:" $Name
+    $vm = New-VM -Name $Name -ResourcePool $resPool -Location $folder -Datastore FS5200_TRAINING -Template $template_selection.Name -OSCustomizationSpec $osCust
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Starting VM:" $Name
+    Start-VM -VM $vm
 }
-
-#
-#     FIND A WAY TO ENABLE ADAPTER BEFORE STARTING VM
-#
-#
-#     ONCE DONE ENABLE CODE BELOW:
-#
-
-
-# Start each VM that is completed
-#$runningTasks = $taskTab.Count
-#while ($runningTasks -gt 0) {
-#    Get-Task | ForEach-Object {
-#        if ($taskTab.ContainsKey($_.Id)) {
- #           $taskInfo = Get-Task -Id $_.Id
- #           if ($taskInfo.State -eq "Success") {
-  #              Get-VM $taskTab[$_.Id] | Start-VM
-   #             $taskTab.Remove($_.Id)
-    #            $runningTasks--
-     #       } elseif ($taskInfo.State -eq "Error") {
-      #          Write-Host "Error creating VM: $($taskTab[$_.Id])"
-       #         $taskTab.Remove($_.Id)
-        #        $runningTasks--
-          #  }
-        #}
-    #}
-    #Start-Sleep -Seconds 15
-#}
