@@ -30,7 +30,6 @@ $AppList = "Microsoft.BingNews",
 	   "Microsoft.GamingApp",
 	   "MicrosoftWindows.Client.WebExperience",
 	   "*SpotifyAB.SpotifyMusic*",
-	   "Microsoft.OutlookForWindows",
 	   "*SkypeApp*"
 
 ForEach ($App in $AppList) {
