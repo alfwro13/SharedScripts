@@ -1,19 +1,4 @@
-AD_lockout/
-Archive_PS_scripts/
-CitrixOptimizer/
-creds/
-DiskMon/
-inventory/
-officedeploymenttool/
-PortQryUI/
-SysinternalsSuite/
-TCPView/
-temp/
-VM/
-Windows Resource Kits/
+# 1. Ignore EVERYTHING by default
+*
 
-wsusdiag
-*.exe
-*.log
-*.tmp
-my.key
+!.gitignore

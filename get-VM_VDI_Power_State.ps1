@@ -1,1 +1,0 @@
-get-vm m4tc* | get-vmguest | where state -eq "NotRunning" | select vm,state,IPaddress
