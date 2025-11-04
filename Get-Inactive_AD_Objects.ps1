@@ -54,11 +54,11 @@ $then = (Get-Date).AddDays(-$DaysInactive)
 
 # Get accounts based on type
 if ($AccountType -eq "User") {
-    $accounts = Get-ADUser -Property SamAccountName, LastLogonDate, DisplayName, Description, ModifyTimeStamp, Enabled, CanonicalName -Filter {LastLogonDate -lt $then} |
+    $accounts = Get-ADUser -Property SamAccountName, LastLogonDate, DisplayName, Description, ModifyTimeStamp, Enabled, CanonicalName -Filter {(LastLogonDate -lt $then) -or (LastLogonDate -notlike "*")} |
         Select-Object SamAccountName, LastLogonDate, Description, ModifyTimeStamp, Enabled, DisplayName, CanonicalName
 }
 elseif ($AccountType -eq "Computer") {
-    $accounts = Get-ADComputer -Property Name, LastLogonDate, OperatingSystem, Description, Modified, Enabled, CanonicalName -Filter {LastLogonDate -lt $then} |
+    $accounts = Get-ADComputer -Property Name, LastLogonDate, OperatingSystem, Description, Modified, Enabled, CanonicalName -Filter {(LastLogonDate -lt $then) -or (LastLogonDate -notlike "*")} |
         Select-Object Name, LastLogonDate, OperatingSystem, Description, Modified, Enabled, CanonicalName
 }
 
