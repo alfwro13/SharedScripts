@@ -4,8 +4,9 @@
 
 .DESCRIPTION
     This script queries Active Directory for user or computer accounts that have not logged on 
-    in a specified number of days. You can choose between user or computer accounts and output 
-    the results to the console or to a graphical Out-GridView window.
+    in a specified number of days, including accounts with no LastLogonDate. You can choose 
+    between user or computer accounts and output the results to the console, a graphical 
+    Out-GridView window, or export them to a CSV file.
 
 .PARAMETER DaysInactive
     Number of days since the last logon. Defaults to 180.
@@ -15,6 +16,13 @@
 
 .PARAMETER GridView
     Optional switch to output results in an Out-GridView window. If not specified, output is sent to the console.
+
+.PARAMETER ExportCSV
+    Optional switch to export the results to a CSV file. Requires a valid file path.
+
+.EXAMPLE
+    .\Get-Inactive_AD_Objects.ps1 -DaysInactive 90 -ExportCSV "C:\Reports\InactiveUsers.csv"
+    Shows user accounts inactive for 90 days or more (or never logged on) and exports them to a CSV file.
 
 .EXAMPLE
     .\Get-Inactive_AD_Objects.ps1
@@ -36,7 +44,7 @@
     Author: Andre Wroblewski
     Created: 2025-08-04
     Requires: ActiveDirectory module (RSAT)
-    Updated: 04-Nov-2025
+    Updated: 04-Nov-2025 (Added check for null LastLogonDate and -ExportCSV option)
 #>
 
 
@@ -44,7 +52,8 @@ param (
     [int]$DaysInactive = 180,
     [ValidateSet("User", "Computer")]
     [string]$AccountType = "User",
-    [switch]$GridView
+    [switch]$GridView,
+    [string]$ExportCSV
 )
 
 Import-Module ActiveDirectory
@@ -62,9 +71,21 @@ elseif ($AccountType -eq "Computer") {
         Select-Object Name, LastLogonDate, OperatingSystem, Description, Modified, Enabled, CanonicalName
 }
 
-# Output based on switch
+# Output results
+# 1. Export to CSV if specified
+if ($ExportCSV) {
+    Write-Host "Exporting $($accounts.Count) inactive $AccountType accounts to '$ExportCSV'..." -ForegroundColor Yellow
+    $accounts | Export-Csv -Path $ExportCSV -NoTypeInformation
+
+    if (-not $GridView) {
+        return
+    }
+}
+# 2. Output to Out-GridView
 if ($GridView) {
     $accounts | Out-GridView -Title "$AccountType Accounts Inactive for $DaysInactive+ Days"
-} else {
+} 
+# 3. Output to Console (default)
+else {
     $accounts | Format-Table -AutoSize
 }
