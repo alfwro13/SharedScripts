@@ -2,3 +2,4 @@
 *
 
 !.gitignore
+!/unlock-adaccounts.ps1
