@@ -1,0 +1,14 @@
+# 1. Ignore EVERYTHING by default
+*
+
+# 2. But DO NOT ignore the .gitignore file itself
+!.gitignore
+
+# 3. RE-INCLUDE the directory
+!/PS_JSON_CONFIG/
+
+# 4. RE-INCLUDE the specific files
+!/Get-Inactive_AD_Objects.ps1
+!/unlock-adaccounts.ps1
+!/PS_JSON_CONFIG/vcenter-config.template.json
+!/connect-VMware.ps1
