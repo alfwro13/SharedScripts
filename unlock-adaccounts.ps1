@@ -102,7 +102,14 @@ if ($LockedAccounts) {
             $UnlockParams.Credential = $ScriptCredential
         }
         
-        $LockedAccounts | Unlock-ADAccount @UnlockParams
+        # --- THE FIX IS HERE ---
+        # Iterate over each locked account and explicitly pass its SAMAccountName as the Identity parameter.
+        $LockedAccounts | ForEach-Object {
+            Write-Host "Unlocking $($_.SAMAccountName)..." -ForegroundColor Cyan
+            Unlock-ADAccount -Identity $_.SAMAccountName @UnlockParams
+        }
+        # --- END OF FIX ---
+
         Write-Host "Unlock process complete." -ForegroundColor Green
     }
     catch {
