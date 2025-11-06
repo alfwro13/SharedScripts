@@ -1,5 +1,8 @@
 # 1. Ignore EVERYTHING by default
 *
-
-!.gitignore
+# 2. re-include files I want to track (add more as needed)
+!/Get-Inactive_AD_Objects.ps1
 !/unlock-adaccounts.ps1
+
+# 3. But DO NOT ignore the .gitignore file itself
+!.gitignore
