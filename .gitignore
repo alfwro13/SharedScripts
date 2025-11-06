@@ -11,3 +11,4 @@
 !/Get-Inactive_AD_Objects.ps1
 !/unlock-adaccounts.ps1
 !/PS_JSON_CONFIG/vcenter-config.template.json
+!/connect-VMware.ps1
