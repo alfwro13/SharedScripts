@@ -1,7 +1,5 @@
 Import-Module .\DomainAdminUtils.psm1
 
-# --- Main Script Logic ---
-
 # 1. Get the required credentials (will be $null if current user is DA)
 Write-Host "Starting credential check..." -ForegroundColor White
 $ScriptCredential = Get-DomainAdminCredential
