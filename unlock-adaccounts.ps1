@@ -1,121 +1,81 @@
-# --- Function to check for Domain Admin Group Membership using whoami ---
-function Test-IsDomainAdmin {
-    # Check current user's group membership for 'Domain Admins' using whoami /groups
-    try {
-        # whoami /groups returns a list of SIDs and group names
-        $WhoAmIOutput = whoami /groups
-        # We look for the Domain Admins group name in the output.
-        if ($WhoAmIOutput -match "Domain Admins") {
-            return $true
-        } else {
-            return $false
-        }
-    }
-    catch {
-        Write-Warning "Could not run 'whoami /groups' to determine status."
-        return $false
-    }
-}
+Import-Module .\DomainAdminUtils.psm1
 
 # --- Main Script Logic ---
 
-$ScriptCredential = $null
-$DomainAdminRequired = $false
+# 1. Get the required credentials (will be $null if current user is DA)
+Write-Host "Starting credential check..." -ForegroundColor White
+$ScriptCredential = Get-DomainAdminCredential
 
-# 1. Check if running with Domain Admin rights
-if (Test-IsDomainAdmin) {
-    Write-Host "Running with current credentials (Domain Admin detected)." -ForegroundColor Green
-} else {
-    Write-Host "Current user is NOT a Domain Admin." -ForegroundColor Yellow
-    
-    $DomainAdminRequired = $true
-    
-    # WORKAROUND: Force Graphical Credential Prompt to bypass console bug
-    Write-Host "Forcing graphical credential prompt to appear. Please enter Domain Admin credentials." -ForegroundColor Yellow
-    
-    try {
-        $ScriptCredential = $Host.UI.PromptForCredential(
-            "Unlock Accounts", # Title of the credential window
-            "Enter Domain Admin credentials to proceed with account unlocking.", # Message inside the window
-            "", # Default username (blank)
-            "" # Domain (blank)
-        )
-    }
-    catch {
-        Write-Host "ERROR: Could not launch credential prompt. Exiting script." -ForegroundColor Red
-        exit 1
-    }
-
-    # CRITICAL CHECK: Check if the user hit Cancel/Esc
-    # $Host.UI.PromptForCredential returns a PSCredential object, or $null if canceled.
-    if (-not $ScriptCredential) {
-        Write-Host "Credentials not provided (prompt canceled). Exiting script." -ForegroundColor Red
-        exit 1
-    }
+# If credentials were required but not returned (e.g., user canceled prompt), exit.
+if (-not $ScriptCredential -and -not (Test-IsDomainAdmin)) {
+    Write-Host "Exiting script due to lack of required Domain Admin credentials." -ForegroundColor Red
+    exit 1
 }
 
-# --- Execution Block ---
+# 2. Proceed with the Active Directory operations using the retrieved credential
 
-Import-Module ActiveDirectory -ErrorAction SilentlyContinue
+Import-Module ActiveDirectory -ErrorAction Stop
 
-Write-Host "`nLocked accounts (excluding 'Administrator'):"
+Write-Host "`nSearching for locked accounts..." -ForegroundColor Yellow
 
 try {
-    $Params = @{
+    # Define parameters for the AD command
+    $SearchParams = @{
         'LockedOut' = $true
+        'ErrorAction' = 'Stop'
     }
+    
+    # Add the credential parameter if one was provided
     if ($ScriptCredential -ne $null) {
-        $Params.Credential = $ScriptCredential
+        $SearchParams.Credential = $ScriptCredential
     }
 
-    $LockedAccounts = Search-ADAccount @Params | 
+    $LockedAccounts = Search-ADAccount @SearchParams | 
         Where-Object { $_.Name -NotLike "Administrator" } | 
         Select-Object Name, SAMAccountName
 }
 catch {
-    Write-Host "Failed to search Active Directory:" -ForegroundColor Red
+    Write-Host "Failed to search Active Directory. Check if the Active Directory module is installed or if permissions are correct." -ForegroundColor Red
     Write-Error $_.Exception.Message
-    Write-Host "Exiting script." -ForegroundColor Red
     exit 1
 }
 
-
 if ($LockedAccounts) {
+    Write-Host "`n--- Locked Accounts Found ---" -ForegroundColor Yellow
     $LockedAccounts | Format-Table -AutoSize
+    Write-Host "---------------------------" -ForegroundColor Yellow
 } else {
-    Write-Host "No locked accounts found." -ForegroundColor Cyan
+    Write-Host "`nNo locked accounts found (excluding 'Administrator')." -ForegroundColor Cyan
 }
 
-# Only proceed to unlock if there were locked accounts found
+# 3. Unlock Accounts
 if ($LockedAccounts) {
     Write-Host ""
-    Write-Host "Press any key to proceed to unlock" -ForegroundColor White
-    Pause | Out-Null 
+    Read-Host "Press ENTER to proceed to unlock accounts..." | Out-Null
 
     Write-Host "Attempting to unlock accounts..." -ForegroundColor Yellow
     
     try {
         $UnlockParams = @{
-            'Confirm' = $true
+            'Confirm' = $false # Setting this to $false for demonstration, change to $true for interactive use
+            'ErrorAction' = 'Stop'
         }
+        
+        # Add the credential parameter if one was provided
         if ($ScriptCredential -ne $null) {
             $UnlockParams.Credential = $ScriptCredential
         }
         
-        # --- THE FIX IS HERE ---
-        # Iterate over each locked account and explicitly pass its SAMAccountName as the Identity parameter.
+        # Iterate over each locked account and unlock
         $LockedAccounts | ForEach-Object {
             Write-Host "Unlocking $($_.SAMAccountName)..." -ForegroundColor Cyan
             Unlock-ADAccount -Identity $_.SAMAccountName @UnlockParams
         }
-        # --- END OF FIX ---
 
-        Write-Host "Unlock process complete." -ForegroundColor Green
+        Write-Host "`nUnlock process complete." -ForegroundColor Green
     }
     catch {
-        Write-Host "Failed to unlock accounts:" -ForegroundColor Red
+        Write-Host "Failed to unlock one or more accounts:" -ForegroundColor Red
         Write-Error $_.Exception.Message
     }
 }
-
-Pause
