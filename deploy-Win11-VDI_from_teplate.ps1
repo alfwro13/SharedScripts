@@ -24,7 +24,7 @@ exit
 Y:\NC\Work\U_drive\connect-VMware.ps1
 
 $note = read-host "Specify owner of this VM"
-$template = "Win11_template"
+$template = "Win11-template-24H2"
 
 $a = Get-Datastore FS5200_VDI_SYSTEMS
 
