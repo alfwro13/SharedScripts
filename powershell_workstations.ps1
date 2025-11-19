@@ -1,1 +1,0 @@
-﻿runas /user:isys\gis2.awroblewski powershell

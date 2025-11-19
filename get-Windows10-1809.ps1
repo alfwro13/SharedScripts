@@ -1,1 +1,0 @@
-get-adcomputer -filter {OperatingSystemVersion -like "*17763*"} -prop * | ? enabled -eq "true" | ? OperatingSystemVersion -like 10* | select CN,OperatingSystemVersion,CanonicalName,Description | Out-GridView

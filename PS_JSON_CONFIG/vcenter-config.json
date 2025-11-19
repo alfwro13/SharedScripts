@@ -1,6 +1,0 @@
-{
-  "_comment": "when adding keys here, please also update the template file at PS_JSON_CONFIG/vcenter-config-template.json",
-  "vCenterIP": "10.0.61.29",
-  "Username": "amw@intranet.macro4.com",
-  "CredsFolder": "Y:\\NC\\Work\\U_drive\\creds"
-}
