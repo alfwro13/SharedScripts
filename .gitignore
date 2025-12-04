@@ -14,3 +14,4 @@
 !/connect-VMware.ps1
 !/get-BitLockerKeys.ps1
 !/DomainAdminUtils.psm1
+!/reset-WSUS.ps1
